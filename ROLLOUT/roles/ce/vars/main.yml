@@ -12,7 +12,7 @@
      PE: DC2-B1
      PE_interface: Te0/0/0/7
      speed: 10G
-   - hostname: SC2SWIDCWR1-01
+   - hostname: DC2RTRWEBCELLA2-P1
      main_interface: Eth1/1
      sub_int:
        Eth1/1.2221:

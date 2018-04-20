@@ -1,0 +1,24 @@
+---
+ routers:
+    - hostname: DC2-B1
+      main_interface: Te0/0/0/7
+      sub_int:
+        Te0/0/0/7.2220:
+          vrf: RIX
+          nei: 192.2.21.178
+      remote_as: 64660
+      CE: DC2RTRWEBCELLA1-P1
+      CE_interface: Eth1/1
+      speed: 10G
+      BACKBONE: RED
+    - hostname: DC2-B2
+      main_interface: Te7/5
+      sub_int:
+        Te7/5.2221:
+          vrf: RIX
+          nei: 192.2.21.182
+      remote_as: 64660
+      CE: DC2RTRWEBCELLA2-P1
+      CE_interface: Eth1/1
+      speed: 10G  
+      BACKBONE: BLUE    

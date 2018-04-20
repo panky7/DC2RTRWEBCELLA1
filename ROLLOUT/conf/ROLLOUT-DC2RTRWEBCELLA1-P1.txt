@@ -1,0 +1,149 @@
+!--------------------------------------------------------	 
+!PRE-Check DC2RTRWEBCELLA1-P1: Step 0 Capture the O/P of the below commands for comparison after the change
+!--------------------------------------------------------
+!
+sh int status | in Eth1/1
+!
+show interfaces Eth1/1 | in error
+!
+ 
+sh bgp vrf all summary | in 192.2.21.177
+!
+!
+!
+!
+!-------------------------------------------------------- 
+! DC2RTRWEBCELLA1-P1: Shutdown the PE<=>CE interface 
+!-------------------------------------------------------- 
+
+interface Eth1/1
+shutdown
+!
+ 
+no interface vlan 2220
+!
+!
+!##################################################################################### 
+! Step 1B Rollout : DC2RTRWEBCELLA1-P1==>CE-PE interconnection isolation if replacing Vlans interface by sub-interfaces
+!#################################################################################### 
+ 
+!-------------------------------------------------------- 
+! DC2RTRWEBCELLA1-P1: change the interface description and configure sub-interface
+!-------------------------------------------------------- 
+!
+!
+interface Eth1/1
+ description FED_DC2-B1_Te0/0/0/7_10G
+!
+interface Eth1/1.2220
+ description FED_RIX_DC2-B1_Te0/0/0/7_10G
+ vrf member RIX
+encapsulation dot1q 2220
+logging event port link-status
+no ip redirects
+ip address 192.2.21.178/30
+no ipv6 redirects
+
+!
+!
+end
+copy running-config startup-config 
+
+
+!******************************************************** 
+ DC2RTRWEBCELLA1-P1: Checks 
+!******************************************************** 
+!Check if the BFD feature is enable
+show feature | include bfd
+!
+!##################################################################################### 
+! Step 2 Rollout Standardisation :DC2RTRWEBCELLA1-P1
+!#################################################################################### 
+!
+!--------------------------------------------------------
+!DC2RTRWEBCELLA1-P1: interface Standardisation:
+!--------------------------------------------------------
+!
+! ==> Note: BFD is not supported Vlan: All Vlan interface must be deleted and recreated as sub interfaces
+!
+! interface Ten or GigabitEthernet
+!
+! a) Check the description format: FED_<VRF NAME>_<CE NAME>_SxPx_BW_TELCO_NUMBER
+! B) If TElco Link add: dampening 
+! C) If not native speed: bandwidth x00000
+! C) logging event link-status
+! D) Check the correct WRR
+!
+!sub-interface Ten or GigabitEthernet.wxyz
+!
+! a) Check the description format: FED_<VRF NAME>_<CE NAME>_SxPx_BW
+! B) Add if missIN ing: no ip redirects,no ip unreachables, no ip proxy-arp
+! C) Add BFD: bfd  interval 500 min_rx 500 multiplier 3 /!\ for Etherchannels: bfd interval 750 min_rx 750 multiplier 3
+!
+interface Eth1/1
+ !
+!
+interface Eth1/1.2220
+ no ip redirects 
+ no ip unreachables 
+ no ip proxy-arp 
+ bfd interval 500 min_rx 500 multiplier 3
+!
+!
+!--------------------------------------------------------
+! DC2RTRWEBCELLA1-P1: Update all the eBGP peers eBGP
+!--------------------------------------------------------
+!
+! a) Check the description format: eBGP <PE name>_<VRF name>>
+! B) Add if missing: neighbor <PE IP@> fall-over bfd
+! C) Delete route-maps set metrics when possible /!\ to be confirmed with HSG\MBS
+! D) Add the per neighbor route-maps for plan selection Option 1 (without static Metric) or Option 2 (static Metrics)
+!
+router bgp 64923
+!
+vrf RIX
+address-family ipv4 unicast
+neighbors 192.2.21.177 remote-as 64911 
+bfd
+description RIX_DC2-B1
+!
+! 
+
+   
+ 
+### The neibhor description is not as per standard #### 
+
+!--------------------------------------------------------
+! DC2RTRWEBCELLA1-P1: Update all the eBGP peers eBGP
+!--------------------------------------------------------
+!#####################################################################################
+! Step 4 Rollout PE-CE IN interconnection reactivation
+! ####################################################################################
+!
+!--------------------------------------------------------	 
+!  DC2RTRWEBCELLA1-P1: Enable the PE<=>CE interface
+!--------------------------------------------------------
+!	
+!	 
+interface Eth1/1
+ no shutdown
+!
+interface Eth1/1.2220
+ no shutdown
+!
+! 
+copy running config startup-config
+#######################################################################
+# Post Checks CE DC2RTRWEBCELLA1-P1
+####################################################################### 
+
+!
+sh int status | in Eth1/1
+!
+show interfaces Eth1/1 | in error
+!
+ 
+sh bgp vrf all summary | in 192.2.21.177
+!
+!
+!

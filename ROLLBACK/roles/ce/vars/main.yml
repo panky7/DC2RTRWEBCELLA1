@@ -1,0 +1,26 @@
+---
+ routers:
+   - hostname: DC2RTRWEBCELLA1-P1
+     main_interface: Eth1/1
+     sub_int:
+       Eth1/1.2220:
+         vlan: 2220
+         vrf: RIX
+         ip: 192.2.21.178/30
+         nei: 192.2.21.177
+     remote_as: 64911
+     PE: DC2-B1
+     PE_interface: Te0/0/0/7
+     speed: 10G
+   - hostname: SC2SWIDCWR1-01
+     main_interface: Eth1/1
+     sub_int:
+       Eth1/1.2221:
+         vlan: 2221
+         vrf: RIX
+         ip: 192.2.21.182/30
+         nei: 192.2.21.181
+     remote_as: 64911
+     PE: DC2-B2
+     PE_interface: Te7/5
+     speed: 10G

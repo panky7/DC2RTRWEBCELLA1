@@ -1,0 +1,47 @@
+!#####################################################################################	   
+! Rollback:	   /!\ à mettre dans un ficher distinct dans la section rollback de la DMEP .doc
+!####################################################################################	   
+!	   
+!--------------------------------------------------------	   
+! Step 1 DC2-B2: Rollback Peerings BGP and Interfacy policy map on all Interconexion	   
+!--------------------------------------------------------
+
+show configuration commit list detail | utility egrep 'Comment:  JUMP-Ticket:Interface Description' -B 4
+
+! Find the rollback ID from the last command
+
+show configuration commit changes <commit-id>
+
+! It will show the configuration of Interface description change
+! If that is the case do the rollback with the commit ID
+
+rollback configuration <commit-id> comment JUMP-Ticket:rollback
+
+!********************************************************	   
+Checks DC2-B2
+!********************************************************	   
+!
+!
+show ip int brief | in Te7/5
+!
+show interfaces Te7/5 | in errors
+!
+ 
+sh bgp vrf all summary | in 192.2.21.182
+!
+!
+!
+!
+!
+
+sh bgp vrf RIX neighbors 192.2.21.182 routes 
+!
+sh bgp vrf RIX neighbors 192.2.21.182 routes | in Processed
+!
+sh bgp vrf RIX neighbors 192.2.21.182 advertised-routes
+!
+sh bgp vrf RIX neighbors 192.2.21.182 advertised-count
+!
+!
+
+

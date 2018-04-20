@@ -1,0 +1,149 @@
+!--------------------------------------------------------	 
+!PRE-Check SC2SWIDCWR1-01: Step 0 Capture the O/P of the below commands for comparison after the change
+!--------------------------------------------------------
+!
+sh int status | in Eth1/1
+!
+show interfaces Eth1/1 | in error
+!
+ 
+sh bgp vrf all summary | in 192.2.21.181
+!
+!
+!
+!
+!-------------------------------------------------------- 
+! SC2SWIDCWR1-01: Shutdown the PE<=>CE interface 
+!-------------------------------------------------------- 
+
+interface Eth1/1
+shutdown
+!
+ 
+no interface vlan 2221
+!
+!
+!##################################################################################### 
+! Step 1B Rollout : SC2SWIDCWR1-01==>CE-PE interconnection isolation if replacing Vlans interface by sub-interfaces
+!#################################################################################### 
+ 
+!-------------------------------------------------------- 
+! SC2SWIDCWR1-01: change the interface description and configure sub-interface
+!-------------------------------------------------------- 
+!
+!
+interface Eth1/1
+ description FED_DC2-B2_Te7/5_10G
+!
+interface Eth1/1.2221
+ description FED_RIX_DC2-B2_Te7/5_10G
+ vrf member RIX
+encapsulation dot1q 2221
+logging event port link-status
+no ip redirects
+ip address 192.2.21.182/30
+no ipv6 redirects
+
+!
+!
+end
+copy running-config startup-config 
+
+
+!******************************************************** 
+ SC2SWIDCWR1-01: Checks 
+!******************************************************** 
+!Check if the BFD feature is enable
+show feature | include bfd
+!
+!##################################################################################### 
+! Step 2 Rollout Standardisation :SC2SWIDCWR1-01
+!#################################################################################### 
+!
+!--------------------------------------------------------
+!SC2SWIDCWR1-01: interface Standardisation:
+!--------------------------------------------------------
+!
+! ==> Note: BFD is not supported Vlan: All Vlan interface must be deleted and recreated as sub interfaces
+!
+! interface Ten or GigabitEthernet
+!
+! a) Check the description format: FED_<VRF NAME>_<CE NAME>_SxPx_BW_TELCO_NUMBER
+! B) If TElco Link add: dampening 
+! C) If not native speed: bandwidth x00000
+! C) logging event link-status
+! D) Check the correct WRR
+!
+!sub-interface Ten or GigabitEthernet.wxyz
+!
+! a) Check the description format: FED_<VRF NAME>_<CE NAME>_SxPx_BW
+! B) Add if missIN ing: no ip redirects,no ip unreachables, no ip proxy-arp
+! C) Add BFD: bfd  interval 500 min_rx 500 multiplier 3 /!\ for Etherchannels: bfd interval 750 min_rx 750 multiplier 3
+!
+interface Eth1/1
+ !
+!
+interface Eth1/1.2221
+ no ip redirects 
+ no ip unreachables 
+ no ip proxy-arp 
+ bfd interval 500 min_rx 500 multiplier 3
+!
+!
+!--------------------------------------------------------
+! SC2SWIDCWR1-01: Update all the eBGP peers eBGP
+!--------------------------------------------------------
+!
+! a) Check the description format: eBGP <PE name>_<VRF name>>
+! B) Add if missing: neighbor <PE IP@> fall-over bfd
+! C) Delete route-maps set metrics when possible /!\ to be confirmed with HSG\MBS
+! D) Add the per neighbor route-maps for plan selection Option 1 (without static Metric) or Option 2 (static Metrics)
+!
+router bgp 64923
+!
+vrf RIX
+address-family ipv4 unicast
+neighbors 192.2.21.181 remote-as 64911 
+bfd
+description RIX_DC2-B2
+!
+! 
+
+   
+ 
+### The neibhor description is not as per standard #### 
+
+!--------------------------------------------------------
+! SC2SWIDCWR1-01: Update all the eBGP peers eBGP
+!--------------------------------------------------------
+!#####################################################################################
+! Step 4 Rollout PE-CE IN interconnection reactivation
+! ####################################################################################
+!
+!--------------------------------------------------------	 
+!  SC2SWIDCWR1-01: Enable the PE<=>CE interface
+!--------------------------------------------------------
+!	
+!	 
+interface Eth1/1
+ no shutdown
+!
+interface Eth1/1.2221
+ no shutdown
+!
+! 
+copy running config startup-config
+#######################################################################
+# Post Checks CE SC2SWIDCWR1-01
+####################################################################### 
+
+!
+sh int status | in Eth1/1
+!
+show interfaces Eth1/1 | in error
+!
+ 
+sh bgp vrf all summary | in 192.2.21.181
+!
+!
+!

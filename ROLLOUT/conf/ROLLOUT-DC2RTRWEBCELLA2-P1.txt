@@ -33,10 +33,10 @@ no interface vlan 2221
 !
 !
 interface Eth1/1
- description FED_DC2-B2_Te7/5_10G
+ description FED_DC2-B2_Te0/0/0/7_10G
 !
 interface Eth1/1.2221
- description FED_RIX_DC2-B2_Te7/5_10G
+ description FED_RIX_DC2-B2_Te0/0/0/7_10G
  vrf member RIX
 encapsulation dot1q 2221
 logging event port link-status

@@ -22,9 +22,9 @@ Checks DC2-B2
 !********************************************************	   
 !
 !
-show ip int brief | in Te7/5
+show ip int brief | in Te0/0/0/7
 !
-show interfaces Te7/5 | in errors
+show interfaces Te0/0/0/7 | in errors
 !
  
 sh bgp vrf all summary | in 192.2.21.182

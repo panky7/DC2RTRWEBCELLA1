@@ -22,5 +22,5 @@
          nei: 192.2.21.181
      remote_as: 64911
      PE: DC2-B2
-     PE_interface: Te7/5
+     PE_interface: Te0/0/0/7
      speed: 10G

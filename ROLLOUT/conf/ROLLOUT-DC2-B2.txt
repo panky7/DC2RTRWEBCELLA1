@@ -2,9 +2,9 @@
 !PRE-Check DC2-B2: Step 0 Capture the O/P of the below commands for comparison after the change
 !--------------------------------------------------------	
 !
-show ip int brief | in Te7/5
+show ip int brief | in Te0/0/0/7
 !
-show interfaces Te7/5 | in errors
+show interfaces Te0/0/0/7 | in errors
 !
  
 sh bgp vrf all summary | in 192.2.21.182
@@ -27,10 +27,10 @@ sh bgp vrf RIX neighbors 192.2.21.182 advertised-count
 !####################################################################################	 
 !
 !
-interface Te7/5
+interface Te0/0/0/7
  description FED_DC2RTRWEBCELLA2-P1_Eth1/1_1G
 !
-interface Te7/5.2221
+interface Te0/0/0/7.2221
  description FED_RIX_DC2RTRWEBCELLA2-P1_Eth1/1_1G
 !
 !
@@ -54,10 +54,10 @@ commit comment JUMP-TICKET:BGP Description
 !DC2-B2: Shutdown the PE<=>CE  interface
 !--------------------------------------------------------
 !
-interface Te7/5
+interface Te0/0/0/7
 shutdown
 !
-interface Te7/5.2221
+interface Te0/0/0/7.2221
 shutdown
 !
 !
@@ -67,9 +67,9 @@ commit comment JUMP-TICKET: Interface shutdown
 !********************************************************
 
 !
-show ip int brief | in Te7/5
+show ip int brief | in Te0/0/0/7
 !
-show interfaces Te7/5 | in errors
+show interfaces Te0/0/0/7 | in errors
 !
  
 sh bgp vrf all summary | in 192.2.21.182
@@ -103,11 +103,11 @@ sh bgp vrf all summary | in 192.2.21.182
 ! DC2-B2: interface Standardisation:
 !--------------------------------------------------------
 !
-interface Te7/5
+interface Te0/0/0/7
  service-policy input 10GE_PMAP_IN 
  service-policy output 10GE_PMAP_OUT
 !
-interface Te7/5.2221
+interface Te0/0/0/7.2221
 service-policy input 10GE_PMAP_IN 
 service-policy output 10GE_PMAP_OUT 
 ipv4 unreachables disable
@@ -159,10 +159,10 @@ commit comment JUMP-TICKET:BGP Standarization
 ! DC2-B2: Enable the PE<=>CE interface
 !--------------------------------------------------------
 !	 
-interface Te7/5
+interface Te0/0/0/7
  no shutdown
 !
-interface Te7/5.2221
+interface Te0/0/0/7.2221
  no shutdown
 !
 !
@@ -173,9 +173,9 @@ commit Jump Ticket: No shutdown Interface
 !********************************************************	
 !
 !
-show ip int brief | in Te7/5
+show ip int brief | in Te0/0/0/7
 !
-show interfaces Te7/5 | in errors
+show interfaces Te0/0/0/7 | in errors
 !
 !--------------------------------------------------------	 
 !DC2-B2: Enable all eBGPS peerings for all the interconnections' VRF
@@ -199,9 +199,9 @@ commit comment JUMP-TICKET:BGP no-shutdown
 !==> Quick Double-check no error on the interfaces 
 !
 !
-show ip int brief | in Te7/5
+show ip int brief | in Te0/0/0/7
 !
-show interfaces Te7/5 | in errors
+show interfaces Te0/0/0/7 | in errors
 !
  
 sh bgp vrf all summary | in 192.2.21.182
